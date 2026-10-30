@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <title>Ladrillera Control</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="barra-superior">
+    <div class="encabezado">
+      <p class="marca">
+        <svg class="marca-ladrillo" viewBox="0 0 24 16" width="24" height="16" aria-hidden="true" focusable="false">
+          <rect width="24" height="16" rx="3"/>
+          <path d="M0 8h24M12 0v8M6 8v8M18 8v8"/>
+        </svg>
+        Ladrillera Control
+      </p>
+      <h1 id="titulo">Ladrillera Control</h1>
+      <p class="fecha-hoy" id="fecha-hoy"></p>
+    </div>
+    <a class="boton-ajustes" href="#/ajustes" data-ruta="ajustes" aria-label="Ajustes"><span class="icono" data-icono="ajustes" aria-hidden="true"></span></a>
+  </header>
+
+  <main id="pantalla"></main>
+
+  <nav class="barra-inferior" aria-label="Secciones">
+    <a href="#/resumen" data-ruta="resumen"><span class="icono" data-icono="resumen" aria-hidden="true"></span>Resumen</a>
+    <a href="#/peones" data-ruta="peones"><span class="icono" data-icono="peones" aria-hidden="true"></span>Peones</a>
+    <a href="#/venta" data-ruta="venta"><span class="icono" data-icono="venta" aria-hidden="true"></span>Venta</a>
+    <a href="#/gasto" data-ruta="gasto"><span class="icono" data-icono="gasto" aria-hidden="true"></span>Gasto</a>
+  </nav>
+
+  <noscript><p class="error-grande">Esta app necesita JavaScript para funcionar.</p></noscript>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
