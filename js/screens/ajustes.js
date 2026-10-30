@@ -5,7 +5,7 @@ import { cargarTodo, guardar, guardarAjustes, importar } from '../db.js';
 import { hacerRespaldo, leerRespaldo, validarRespaldo } from '../backup.js';
 import { esFechaValida, formatoFecha, hoy } from '../fechas.js';
 import { icono, iconoTipoGasto } from '../iconos.js';
-import { aTextoEntrada, formatoCantidad, formatoDinero, formatoPrecio, parseCantidad, parseMonto } from '../money.js';
+import { aTextoEntrada, formatoDinero, formatoPrecio, parseMonto } from '../money.js';
 import { abrirHoja, agregarEco, aviso, campo, claveNombre, confirmar, estadoVacio, h, ir } from '../ui.js';
 
 const AMBITOS = [
@@ -37,15 +37,9 @@ function abrirHojaProducto(producto, productos, alGuardar) {
   const nombre = campo({ etiqueta: 'Nombre', valor: producto?.nombre ?? '' });
   const precio = campo({ etiqueta: 'Precio de venta por unidad', tipo: 'monto', valor: producto ? aTextoEntrada(producto.precioVenta) : '' });
   const pago = campo({ etiqueta: 'Pago al peón por unidad', tipo: 'monto', valor: producto ? aTextoEntrada(producto.pagoPeon) : '' });
-  const patio = campo({
-    etiqueta: 'Ladrillos en patio al empezar',
-    tipo: 'cantidad',
-    valor: producto ? formatoCantidad(producto.stockInicial) : '',
-    ayuda: 'Los que ya tenías antes de usar la app. Si no había, déjalo vacío.',
-  });
   agregarEco(precio, parseMonto, formatoPrecio);
   agregarEco(pago, parseMonto, formatoPrecio);
-  for (const c of [nombre, precio, pago, patio]) c.input.addEventListener('input', () => c.error(''));
+  for (const c of [nombre, precio, pago]) c.input.addEventListener('input', () => c.error(''));
 
   // La opción Activo solo se ofrece al editar: un producto nuevo siempre empieza activo.
   const hayOtroActivo = productos.some((p) => p.activo && p.id !== producto?.id);
@@ -72,8 +66,6 @@ function abrirHojaProducto(producto, productos, alGuardar) {
     const texto = nombre.input.value.trim();
     const venta = parseMonto(precio.input.value);
     const alPeon = parseMonto(pago.input.value);
-    const textoPatio = patio.input.value.trim();
-    const enPatio = textoPatio === '' ? 0 : parseCantidad(textoPatio);
     const repetido = texto !== '' && productos.some((p) => p.id !== producto?.id && claveNombre(p.nombre) === claveNombre(texto));
     const ventaBien = venta !== null && venta > 0;
     const pagoBien = alPeon !== null && alPeon > 0;
@@ -82,18 +74,16 @@ function abrirHojaProducto(producto, productos, alGuardar) {
     nombre.error(texto === '' ? 'Escribe el nombre del producto' : repetido ? 'Ya hay un producto con ese nombre' : '');
     precio.error(ventaBien ? '' : 'Escribe el precio de venta');
     pago.error(pagoBien ? '' : 'Escribe cuánto se le paga al peón');
-    patio.error(enPatio === null ? 'Escribe un número entero, por ejemplo 7.500' : '');
     errorActivo.hidden = activoBien;
     const primero = [
       [texto === '' || repetido, nombre.input],
       [!ventaBien, precio.input],
       [!pagoBien, pago.input],
-      [enPatio === null, patio.input],
       [!activoBien, botonesActivo[0]],
     ].find(([mal]) => mal);
     if (primero) return primero[1].focus();
 
-    const datos = { nombre: texto, precioVenta: venta, pagoPeon: alPeon, stockInicial: enPatio, activo };
+    const datos = { nombre: texto, precioVenta: venta, pagoPeon: alPeon, activo };
     guardando = true;
     botonGuardar.disabled = true;
     try {
@@ -111,7 +101,7 @@ function abrirHojaProducto(producto, productos, alGuardar) {
   }
 
   dibujarActivo();
-  hoja = abrirHoja(producto ? 'Editar producto' : 'Nuevo producto', [nombre.el, precio.el, pago.el, patio.el, campoActivo, botonGuardar]);
+  hoja = abrirHoja(producto ? 'Editar producto' : 'Nuevo producto', [nombre.el, precio.el, pago.el, campoActivo, botonGuardar]);
   if (!producto) nombre.input.focus();
 }
 
@@ -233,8 +223,7 @@ export async function mostrar(el, params) {
       h('span', { class: 'texto' },
         h('strong', { class: 'nombre' }, producto.nombre, producto.activo ? null : [' ', h('span', { class: 'etiqueta' }, 'Inactivo')]),
         h('span', { class: 'detalle' }, `Venta ${formatoPrecio(producto.precioVenta)}`),
-        h('span', { class: 'detalle' }, `Pago al peón ${formatoPrecio(producto.pagoPeon)}`),
-        producto.stockInicial > 0 ? h('span', { class: 'detalle' }, `En patio al empezar: ${formatoCantidad(producto.stockInicial)}`) : null),
+        h('span', { class: 'detalle' }, `Pago al peón ${formatoPrecio(producto.pagoPeon)}`)),
       icono('editar', { tam: 22 }));
   }
 

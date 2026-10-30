@@ -959,7 +959,6 @@ body > noscript .error-grande { margin: 16px; }
 .produccion .producto { display: grid; gap: 14px; }
 .produccion .producto + .producto { padding-top: 14px; border-top: 1px solid var(--borde); }
 #pantalla .produccion h3 { display: flex; align-items: center; gap: 8px; margin: 0; }
-.produccion .detalle { margin: 0; }
 
 /* Ajustes: una tarjeta por tema (título con ícono), filas de productos, tipos de gasto, peones quitados y respaldo */
 .tarjeta.ajuste { gap: 14px; }

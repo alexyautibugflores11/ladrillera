@@ -1,10 +1,10 @@
 // Service worker: guarda todos los archivos de la app en el teléfono para que funcione sin internet.
 //
-// Cuando se cambia cualquier archivo de la app, hay que subir el número de VERSION (ladrillera-v3, v4...):
+// Cuando se cambia cualquier archivo de la app, hay que subir el número de VERSION (ladrillera-v4, v5...):
 // así el teléfono baja la versión nueva, borra la vieja y recarga la app una vez.
 // Cuando se agrega un archivo a la app, hay que agregarlo también a ARCHIVOS (si falta uno que no existe, la instalación falla).
 
-const VERSION = 'ladrillera-v3';
+const VERSION = 'ladrillera-v4';
 
 const ARCHIVOS = [
   './',

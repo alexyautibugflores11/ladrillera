@@ -70,22 +70,12 @@ const cifraFila = (clase, nombreIcono, rotulo, cantidad) =>
     h('span', { class: 'cifra-rotulo' }, rotulo),
     h('strong', {}, formatoCantidad(cantidad)));
 
-// Un producto: barra de lo vendido sobre lo hecho en el período y las tres cifras.
-// Sin ladrillos hechos en el período no hay porcentaje: la barra queda vacía. El porcentaje se corta hacia abajo (99,6 % no es 100 %).
+// Un producto: ladrillos hechos por los peones y vendidos en el período (solo registros, no se restan).
 function bloqueProducto(producto) {
-  const hayHechos = producto.hechos > 0;
-  const porcentaje = hayHechos ? Math.min(100, Math.floor((producto.vendidos * 100) / producto.hechos)) : 0;
   return h('div', { class: 'producto' },
     h('h3', {}, icono('ladrillo', { tam: 22 }), producto.nombre),
-    h('div', { class: hayHechos && producto.vendidos >= producto.hechos ? 'progreso completo' : 'progreso' },
-      h('div', { class: 'progreso-cabecera' },
-        h('span', {}, 'Vendidos de lo hecho'),
-        h('strong', {}, hayHechos ? `${porcentaje} %` : '—')),
-      h('div', { class: 'progreso-pista', 'aria-hidden': 'true' },
-        h('div', { class: 'progreso-barra', style: `width: ${porcentaje}%` }))),
     cifraFila('acento', 'ladrillo', 'Hechos', producto.hechos),
-    cifraFila('ingreso', 'venta', 'Vendidos', producto.vendidos),
-    cifraFila('', 'fabrica', 'En el patio', producto.enPatio));
+    cifraFila('ingreso', 'venta', 'Vendidos', producto.vendidos));
 }
 
 // Una fila de la columna de movimientos. Venta y gasto llevan a su pantalla; adelanto y pago abren su hoja.
@@ -202,8 +192,7 @@ export async function mostrar(el, params) {
         kpi(verdeORojo(total.ganancia), 'resumen', 'Ganancia del negocio', total.ganancia),
         kpi(verdeORojo(total.queda), total.queda >= 0 ? 'flecha-entra' : 'flecha-sale', 'Lo que queda', total.queda)),
       ladrillos.length === 0 ? null : h('div', { class: 'tarjeta produccion' },
-        ladrillos.map(bloqueProducto),
-        h('p', { class: 'detalle' }, 'En el patio es lo que hay ahora, de todos los períodos.')),
+        ladrillos.map(bloqueProducto)),
     ]);
   }
 

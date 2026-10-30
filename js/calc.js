@@ -144,20 +144,17 @@ export function totales(movs) {
   return { ventas, gastosNegocio, gastosCasa, ganancia, queda: ganancia - gastosCasa };
 }
 
-// Por cada producto activo: ladrillos hechos (contados en los pagos) y vendidos dentro del rango,
-// y los que hay en el patio: stock inicial + todo lo hecho - todo lo vendido, sin importar el rango.
+// Por cada producto activo: ladrillos hechos (contados en los pagos) y vendidos dentro del rango.
+// Son solo registros: no se restan entre sí, porque los peones hacen el ladrillo en el patio
+// y lo que se vende sale del horno, que son lugares distintos.
 export function resumenLadrillos(datos, rango) {
-  const hechosEn = (pagos, productoId) =>
-    sumar(pagos, (p) => sumar((p.produccion ?? []).filter((l) => l.productoId === productoId), (l) => l.cantidad));
-  const vendidosEn = (ventas, productoId) => sumar(ventas.filter((v) => v.productoId === productoId), (v) => v.cantidad);
   const pagosDelRango = datos.pagos.filter((p) => enRango(p.fecha, rango));
   const ventasDelRango = datos.ventas.filter((v) => enRango(v.fecha, rango));
   return datos.productos.filter((p) => p.activo === true).map((p) => ({
     productoId: p.id,
     nombre: p.nombre,
-    hechos: hechosEn(pagosDelRango, p.id),
-    vendidos: vendidosEn(ventasDelRango, p.id),
-    enPatio: p.stockInicial + hechosEn(datos.pagos, p.id) - vendidosEn(datos.ventas, p.id),
+    hechos: sumar(pagosDelRango, (pago) => sumar((pago.produccion ?? []).filter((l) => l.productoId === p.id), (l) => l.cantidad)),
+    vendidos: sumar(ventasDelRango.filter((v) => v.productoId === p.id), (v) => v.cantidad),
   }));
 }
 
